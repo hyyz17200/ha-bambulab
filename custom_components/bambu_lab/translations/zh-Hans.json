@@ -84,7 +84,8 @@
             "description": "仅当您具有非标准设置时，才需要这些选项。",
             "data": {
               "disable_ssl_verify": "禁用SSL验证",
-              "enable_firmware_update": "启用固件更新支持"
+              "enable_firmware_update": "启用固件更新支持",
+              "hide_ams_firmware_mismatch": "隐藏“AMS固件与打印机不匹配”的HMS提示（适用于BMCU等第三方AMS）"
             }
           }
         }
@@ -106,7 +107,8 @@
             "description": "仅当您具有非标准设置时，才需要这些选项。",
             "data": {
               "disable_ssl_verify": "禁用SSL验证",
-              "enable_firmware_update": "启用固件更新支持"
+              "enable_firmware_update": "启用固件更新支持",
+              "hide_ams_firmware_mismatch": "隐藏“AMS固件与打印机不匹配”的HMS提示（适用于BMCU等第三方AMS）"
             }
           }
         }
@@ -179,7 +181,8 @@
             "description": "这些高级选项是早期或风险的功能。阅读文档并自行使用它们。",
             "data": {
               "disable_ssl_verify": "禁用SSL验证",
-              "enable_firmware_update": "启用固件更新支持"
+              "enable_firmware_update": "启用固件更新支持",
+              "hide_ams_firmware_mismatch": "隐藏“AMS固件与打印机不匹配”的HMS提示（适用于BMCU等第三方AMS）"
             }
           }
         }
@@ -200,7 +203,8 @@
             "description": "这些高级选项是早期或有风险的功能。阅读文档并自行使用它们。",
             "data": {
               "disable_ssl_verify": "禁用SSL验证",
-              "enable_firmware_update": "启用固件更新支持"
+              "enable_firmware_update": "启用固件更新支持",
+              "hide_ams_firmware_mismatch": "隐藏“AMS固件与打印机不匹配”的HMS提示（适用于BMCU等第三方AMS）"
             }
           }
         }

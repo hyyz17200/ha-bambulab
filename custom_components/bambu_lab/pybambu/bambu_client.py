@@ -382,6 +382,7 @@ class BambuClient:
             self._print_cache_count = 1
         self._timelapse_cache_count = max(-1, int(config.get('timelapse_cache_count', 0)))
         self._disable_ssl_verify = config.get('disable_ssl_verify', False)
+        self._hide_ams_firmware_mismatch = config.get('hide_ams_firmware_mismatch', False)
         self._cache_path = config.get('file_cache_path', f'/config/www/media/ha-bambulab/{self._serial}')
         self._tcp6000_media_supported = None
         self._tcp6000_media_storages = []
@@ -429,6 +430,10 @@ class BambuClient:
     @property
     def camera_enabled(self):
         return self._enable_camera
+
+    @property
+    def hide_ams_firmware_mismatch(self):
+        return self._hide_ams_firmware_mismatch
 
     def callback(self, event: str):
         if self._callback is not None:

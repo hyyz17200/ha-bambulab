@@ -732,6 +732,59 @@ class TestHms(unittest.TestCase):
         self.assertEqual(0, self.hms.error_count)
         self.assertDictEqual({"Count": 0}, self.hms.errors)
 
+    def test_ams_firmware_mismatch_hidden(self):
+        """When hiding is enabled, the AMS firmware mismatch warning is not reported."""
+        self.client._device.info.device_type = Printers.A1
+        self.client.user_language = "en"
+        self.client.hide_ams_firmware_mismatch = True
+        data = {"hms": [{"attr": 0x05000400, "code": 0x00010044}]}
+
+        result = self.hms.print_update(data)
+        self.assertFalse(result)
+        self.client.callback.assert_not_called()
+        self.assertEqual(0, self.hms.error_count)
+        self.assertDictEqual({"Count": 0}, self.hms.errors)
+
+    def test_ams_firmware_mismatch_hidden_for_other_ams_slots(self):
+        """The warning is hidden for AMS B-D and the AMS Lite too, not only for AMS A."""
+        self.client._device.info.device_type = Printers.P1S
+        self.client.user_language = "en"
+        self.client.hide_ams_firmware_mismatch = True
+        data = {"hms": [{"attr": attr, "code": 0x00010044} for attr in (0x05010400, 0x05020400, 0x05030400, 0x05100400)]}
+
+        result = self.hms.print_update(data)
+        self.assertFalse(result)
+        self.assertEqual(0, self.hms.error_count)
+
+    def test_ams_firmware_mismatch_hidden_keeps_other_errors(self):
+        """Hiding the AMS firmware mismatch warning leaves every other HMS error in place."""
+        self.client._device.info.device_type = Printers.X1
+        self.client.user_language = "en"
+        self.client.hide_ams_firmware_mismatch = True
+        # The last entry is the Laser Module firmware mismatch, which differs only in the final digit.
+        data = {"hms": [{"attr": 0x05000400, "code": 0x00010044}, {"attr": 50331904, "code": 65543}, {"attr": 0x05000400, "code": 0x00010046}]}
+
+        result = self.hms.print_update(data)
+        self.assertTrue(result)
+        self.client.callback.assert_called_once_with("event_printer_error")
+        self.assertEqual(2, self.hms.error_count)
+        self.assertEqual("HMS_0300_0100_0001_0007", self.hms.errors["1-Code"])
+        self.assertEqual("HMS_0500_0400_0001_0046", self.hms.errors["2-Code"])
+
+    def test_ams_firmware_mismatch_shown(self):
+        """When hiding is disabled, the AMS firmware mismatch warning is reported like any other."""
+        self.client._device.info.device_type = Printers.A1
+        self.client.user_language = "en"
+        self.client.hide_ams_firmware_mismatch = False
+        data = {"hms": [{"attr": 0x05000400, "code": 0x00010044}]}
+
+        result = self.hms.print_update(data)
+        self.assertTrue(result)
+        self.client.callback.assert_called_once_with("event_printer_error")
+        self.assertEqual(1, self.hms.error_count)
+        self.assertEqual("HMS_0500_0400_0001_0044", self.hms.errors["1-Code"])
+        self.assertEqual("The firmware of AMS A does not match the printer. Please upgrade it on the 'Firmware' page.", self.hms.errors["1-Error"])
+
 class TestPrintErrors(unittest.TestCase):
 
     def setUp(self):

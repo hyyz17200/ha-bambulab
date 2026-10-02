@@ -1,5 +1,6 @@
 import json
 import logging
+import re
 
 from pathlib import Path
 from enum import (
@@ -253,6 +254,13 @@ HMS_MODULES = {
     0x08: "toolhead",
     0x03: "mc"
 }
+
+# HMS codes for "The firmware of AMS <x> does not match the printer.". The second byte is the
+# AMS slot: 00-03 are AMS A-D and 10 is the AMS Lite. Third party AMS replacements such as the
+# BMCU cannot satisfy the printer's version check, so they raise this permanently while working
+# normally. The print errors with the same wording (e.g. 0500_409D) are deliberately not
+# covered as those do stop the printer from accepting jobs.
+HMS_AMS_FIRMWARE_MISMATCH = re.compile(r"05(0[0-3]|10)_0400_0001_0044")
 
 class Home_Flag_Values(IntEnum):
     X_AXIS                              = 0x00000001,

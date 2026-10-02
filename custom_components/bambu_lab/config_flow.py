@@ -433,6 +433,7 @@ class BambuLabFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
                             "usage_hours": float(user_input['usage_hours']),
                             "disable_ssl_verify": user_input['advanced']['disable_ssl_verify'],
                             "enable_firmware_update": user_input['advanced']['enable_firmware_update'],
+                            "hide_ams_firmware_mismatch": user_input['advanced']['hide_ams_firmware_mismatch'],
                             "force_ip": force_ip,
                     }
 
@@ -450,6 +451,7 @@ class BambuLabFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
         default_usage_hours = "0" if user_input is None else user_input['usage_hours']
         default_disable_ssl_verify = False if user_input is None else user_input.get('advanced', {}).get('disable_ssl_verify', '')
         default_enable_firmware_update = False if user_input is None else user_input.get('advanced', {}).get('enable_firmware_update', '')
+        default_hide_ams_firmware_mismatch = False if user_input is None else user_input.get('advanced', {}).get('hide_ams_firmware_mismatch', False)
 
         # Build form
         fields: OrderedDict[vol.Marker, Any] = OrderedDict()
@@ -464,6 +466,7 @@ class BambuLabFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
             vol.Schema({
                 vol.Required('disable_ssl_verify', default=default_disable_ssl_verify): BOOLEAN_SELECTOR,
                 vol.Required('enable_firmware_update', default=default_enable_firmware_update): BOOLEAN_SELECTOR,
+                vol.Required('hide_ams_firmware_mismatch', default=default_hide_ams_firmware_mismatch): BOOLEAN_SELECTOR,
             }),
             {'collapsed': True},
         )
@@ -516,6 +519,7 @@ class BambuLabFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
                         "usage_hours": float(user_input['usage_hours']),
                         "disable_ssl_verify": user_input['advanced']['disable_ssl_verify'],
                         "enable_firmware_update": user_input['advanced']['enable_firmware_update'],
+                        "hide_ams_firmware_mismatch": user_input['advanced']['hide_ams_firmware_mismatch'],
                         "force_ip": (user_input['host'] != bambu.get_device().info.ip_address),
                 }
 
@@ -546,6 +550,7 @@ class BambuLabFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
         default_usage_hours = "0" if user_input is None else user_input['usage_hours']
         default_disable_ssl_verify = False if user_input is None else user_input.get('advanced', {}).get('disable_ssl_verify', '')
         default_enable_firmware_update = False if user_input is None else user_input.get('advanced', {}).get('enable_firmware_update', '')
+        default_hide_ams_firmware_mismatch = False if user_input is None else user_input.get('advanced', {}).get('hide_ams_firmware_mismatch', False)
 
         # Build form
         fields: OrderedDict[vol.Marker, Any] = OrderedDict()
@@ -559,6 +564,7 @@ class BambuLabFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
             vol.Schema({
                 vol.Required('disable_ssl_verify', default=default_disable_ssl_verify): BOOLEAN_SELECTOR,
                 vol.Required('enable_firmware_update', default=default_enable_firmware_update): BOOLEAN_SELECTOR,
+                vol.Required('hide_ams_firmware_mismatch', default=default_hide_ams_firmware_mismatch): BOOLEAN_SELECTOR,
             }),
             {'collapsed': True},
         )
@@ -871,6 +877,7 @@ class BambuOptionsFlowHandler(config_entries.OptionsFlow):
                     options["usage_hours"] = float(user_input['usage_hours'])
                     options["disable_ssl_verify"] = user_input['advanced']['disable_ssl_verify']
                     options["enable_firmware_update"] = user_input['advanced']['enable_firmware_update']
+                    options["hide_ams_firmware_mismatch"] = user_input['advanced']['hide_ams_firmware_mismatch']
                     options["print_cache_count"] = max(-1, int(user_input['print_cache_count']))
                     options["timelapse_cache_count"] = max(-1, int(user_input['timelapse_cache_count']))
                     options["force_ip"] = force_ip
@@ -905,6 +912,7 @@ class BambuOptionsFlowHandler(config_entries.OptionsFlow):
         default_usage_hours = str(self._config_entry.options.get('usage_hours', 0)) if user_input is None else user_input['usage_hours']
         default_disable_ssl_verify = self._config_entry.options.get('disable_ssl_verify', False) if user_input is None else user_input.get('advanced', {}).get('disable_ssl_verify', self._config_entry.options.get('disable_ssl_verify', ''))
         default_enable_firmware_update = self._config_entry.options.get('enable_firmware_update', False) if user_input is None else user_input.get('advanced', {}).get('enable_firmware_update', self._config_entry.options.get('enable_firmware_update', ''))
+        default_hide_ams_firmware_mismatch = self._config_entry.options.get('hide_ams_firmware_mismatch', False) if user_input is None else user_input.get('advanced', {}).get('hide_ams_firmware_mismatch', self._config_entry.options.get('hide_ams_firmware_mismatch', False))
 
         # Build form
         fields: OrderedDict[vol.Marker, Any] = OrderedDict()
@@ -920,6 +928,7 @@ class BambuOptionsFlowHandler(config_entries.OptionsFlow):
             vol.Schema({
                 vol.Required('disable_ssl_verify', default=default_disable_ssl_verify): BOOLEAN_SELECTOR,
                 vol.Required('enable_firmware_update', default=default_enable_firmware_update): BOOLEAN_SELECTOR,
+                vol.Required('hide_ams_firmware_mismatch', default=default_hide_ams_firmware_mismatch): BOOLEAN_SELECTOR,
             }),
             {'collapsed': True},
         )
@@ -968,6 +977,7 @@ class BambuOptionsFlowHandler(config_entries.OptionsFlow):
                 options["usage_hours"] = float(user_input['usage_hours'])
                 options["disable_ssl_verify"] = user_input['advanced']['disable_ssl_verify']
                 options["enable_firmware_update"] = user_input['advanced']['enable_firmware_update']
+                options["hide_ams_firmware_mismatch"] = user_input['advanced']['hide_ams_firmware_mismatch']
                 options["force_ip"] = (user_input['host'] != bambu.get_device().info.ip_address)
 
                 title = self._config_entry.data['serial']
@@ -1001,6 +1011,7 @@ class BambuOptionsFlowHandler(config_entries.OptionsFlow):
         default_usage_hours = str(self._config_entry.options.get('usage_hours', 0)) if user_input is None else user_input['usage_hours']
         default_disable_ssl_verify = self._config_entry.options.get('disable_ssl_verify', False) if user_input is None else user_input.get('advanced', {}).get('disable_ssl_verify', self._config_entry.options.get('disable_ssl_verify', ''))
         default_enable_firmware_update = self._config_entry.options.get('enable_firmware_update', False) if user_input is None else user_input.get('advanced', {}).get('enable_firmware_update', self._config_entry.options.get('enable_firmware_update', ''))
+        default_hide_ams_firmware_mismatch = self._config_entry.options.get('hide_ams_firmware_mismatch', False) if user_input is None else user_input.get('advanced', {}).get('hide_ams_firmware_mismatch', self._config_entry.options.get('hide_ams_firmware_mismatch', False))
 
         fields[vol.Required('host', default=default_host)] = TEXT_SELECTOR
         fields[vol.Required('access_code', default=default_access_code)] = TEXT_SELECTOR
@@ -1011,6 +1022,7 @@ class BambuOptionsFlowHandler(config_entries.OptionsFlow):
             vol.Schema({
                 vol.Required('disable_ssl_verify', default=default_disable_ssl_verify): BOOLEAN_SELECTOR,
                 vol.Required('enable_firmware_update', default=default_enable_firmware_update): BOOLEAN_SELECTOR,
+                vol.Required('hide_ams_firmware_mismatch', default=default_hide_ams_firmware_mismatch): BOOLEAN_SELECTOR,
             }),
             {'collapsed': True},
         )

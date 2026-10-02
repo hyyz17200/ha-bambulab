@@ -56,6 +56,7 @@ from .const import (
     AIRDUCT_MODES,
     TempEnum, Print_Fun_Values,
     UNKNOWN_TRAY_LABEL,
+    HMS_AMS_FIRMWARE_MISMATCH,
 )
 from .commands import (
     CHAMBER_LIGHT_ON,
@@ -3818,6 +3819,9 @@ class HMSList:
                 attr=attr,
                 code=code
                 )
+            if self._client.hide_ams_firmware_mismatch and HMS_AMS_FIRMWARE_MISMATCH.fullmatch(hms_notif.hms_code):
+                LOGGER.debug("Hiding HMS notification with code %s (AMS firmware mismatch).", hms_notif.hms_code)
+                continue
             if not hms_notif.hms_error:
                 LOGGER.debug("Skipping HMS notification with code %s (no text).", hms_notif.hms_code)
                 continue  # skip invalid entries

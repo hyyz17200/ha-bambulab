@@ -42,6 +42,7 @@ Additional setup may be needed for specific entities to work:
 Advanced options should only be used for non-standard setup.
 
 - Disable SSL verification - disabled certificate verification for MQTT, FTP and chamber camera connections to printer (unsafe).
+- Hide the 'AMS firmware does not match the printer' HMS warning - off by default. A third party AMS such as the BMCU cannot pass the printer's firmware version check, so the printer raises this warning (`HMS_0500_0400_0001_0044`, or the matching code for AMS B-D and AMS Lite) permanently even though it works normally. Turn this on to keep it out of the HMS errors sensor. The print error that stops the printer accepting jobs for the same reason is never hidden.
 
 ### Setup using Bambu Cloud w/ OAuth
 
